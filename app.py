@@ -1,16 +1,23 @@
 import os
 import random
 import streamlit as st
-from dotenv import load_dotenv
 from supabase import create_client, Client
 
-# 1. Setup the Web Page settings (Mobile Friendly)
+# 1. Setup the Web Page settings
 st.set_page_config(page_title="PMP Quizzer", page_icon="🚀", layout="centered")
 
-# 2. Securely connect to Supabase
-load_dotenv()
-url = os.environ.get("SUPABASE_URL").strip()
-key = os.environ.get("SUPABASE_KEY").strip()
+# 2. Securely connect to Supabase (Cloud & Local Hybrid)
+try:
+    # This runs when deployed on Streamlit Cloud
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+except KeyError:
+    # This runs when testing locally on your PC
+    from dotenv import load_dotenv
+    load_dotenv()
+    url = os.environ.get("SUPABASE_URL").strip()
+    key = os.environ.get("SUPABASE_KEY").strip()
+
 supabase: Client = create_client(url, key)
 
 # 3. Fetch Data (Cached so it doesn't slow down the website)
